@@ -1,33 +1,43 @@
+import PageLoader from '../../components/PageLoader'
 import useLoading from '../../hooks/useLoading'
+import { getGroupInfo } from '../../api/group.fb'
+import { Box, Container } from '@chakra-ui/react'
+import ChatHeader from '../../components/ChatHeader'
+import ChatFooter from '../../components/ChatFooter'
+import ChatBody from '../../components/ChatBody'
 
-async function loadEntries() {
-  const res = await fetch('https://api.publicapis.org/entries')
-  const data = await res.json()
-  return data
-}
-
-export async function getServerSideProps() {
-  const entries = await loadEntries()
-
+export async function getServerSideProps(context) {
+  const groupID = context.params.roomId
+  const response = await getGroupInfo(groupID)
+  console.log('Group Info ===>>', response)
   return {
     props: {
-      entries,
+      group: response?.data || {},
     },
   }
 }
 
-export default function Posts({ entries = { entries: [] } }) {
-  console.log(entries)
+export default function Posts({ group }) {
   const isLoading = useLoading()
+  console.log(group)
 
   return (
-    <>
-      {isLoading && <h1>Loading...</h1>}
+    <Box>
+      {isLoading && <PageLoader />}
 
-      {!isLoading &&
-        entries.entries.map((post, index) => (
-          <div key={index}>{post.Description}</div>
-        ))}
-    </>
+      {!isLoading && (
+        <Box>
+          <Box padding={4} bgGradient="linear(to-r, green.100, pink.300)">
+            <ChatHeader title={group.title} />
+          </Box>
+          <Box height={'calc(100vh - 130px)'}>
+            <ChatBody />
+          </Box>
+          <Box>
+            <ChatFooter />
+          </Box>
+        </Box>
+      )}
+    </Box>
   )
 }

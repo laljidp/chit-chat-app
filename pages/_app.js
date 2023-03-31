@@ -6,6 +6,7 @@ import '../styles/globals.css'
 // 1. Import the extendTheme function
 import { extendTheme } from '@chakra-ui/react'
 import { useState } from 'react'
+import PageLoader from '../components/PageLoader'
 
 // 2. Extend the theme to include custom colors, fonts, etc
 const colors = {
@@ -32,24 +33,7 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <ChakraProvider theme={theme}>
-      {pageLoading ? (
-        <Container
-          height="100%"
-          width="100%"
-          alignContent={'center'}
-          justifyContent="center"
-        >
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />
-        </Container>
-      ) : (
-        <Component {...pageProps} />
-      )}
+      {pageLoading ? <PageLoader /> : <Component {...pageProps} />}
     </ChakraProvider>
   )
 }
