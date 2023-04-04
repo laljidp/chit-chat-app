@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import PageLoader from '../../components/PageLoader'
 import useLoading from '../../hooks/useLoading'
 import ChatHeader from '../../components/ChatHeader'
@@ -8,7 +8,12 @@ import InvalidRequest from '../../components/InvalidRequest'
 import { getRoomInfo } from '../../api/rooms.fb'
 import { Box, useToast } from '@chakra-ui/react'
 import { UContext } from '../../context/userContext'
-import { getChatsByRoom, saveMessage } from '../../api/message.db'
+import {
+  getChatsByGroupQuery,
+  getChatsByRoom,
+  saveMessage,
+} from '../../api/message.db'
+import { onSnapshot } from 'firebase/firestore'
 
 export async function getServerSideProps(context) {
   const roomID = context.params.roomId
@@ -22,8 +27,6 @@ export async function getServerSideProps(context) {
   }
 }
 
-let unsubscribe
-
 export default function ChatRoom({ room, roomID }) {
   const isLoading = useLoading()
   const { user } = useContext(UContext)
@@ -33,6 +36,7 @@ export default function ChatRoom({ room, roomID }) {
     text: '',
     attachments: [],
   })
+  const chatBodyRef = useRef(null)
 
   const handleChange = (data) => {
     setMessage({ ...message, ...data })
@@ -56,7 +60,6 @@ export default function ChatRoom({ room, roomID }) {
       createdAt: new Date(),
       status: '',
     }
-    console.log('Payload', payload)
     const result = await saveMessage(payload)
     if (result.success) {
       setMessage({
@@ -72,15 +75,27 @@ export default function ChatRoom({ room, roomID }) {
     }
   }
 
-  const fetchChatsByRoom = async () => {
-    const response = await getChatsByRoom(roomID)
-    if (response.success) {
-      setChats(response.data)
-    }
-  }
-
   useEffect(() => {
-    fetchChatsByRoom()
+    const unsubscribe = onSnapshot(
+      getChatsByGroupQuery(roomID),
+      (querySnapshot) => {
+        const data = []
+        querySnapshot.forEach((doc) => {
+          data.push(doc.data())
+        })
+        setChats(data)
+        setTimeout(() => {
+          chatBodyRef.current.scrollTo({
+            top: chatBodyRef.current.scrollHeight,
+            behavior: 'smooth',
+          })
+        }, 500)
+      }
+    )
+
+    return () => {
+      unsubscribe && unsubscribe()
+    }
   }, [])
 
   if (!room?.id && user?.userName) {
@@ -93,10 +108,20 @@ export default function ChatRoom({ room, roomID }) {
 
       {!isLoading && (
         <Box>
-          <Box padding={4} bgGradient="linear(to-r, green.100, pink.300)">
+          <Box
+            padding={4}
+            bgGradient="linear(to-r, green.100, pink.300)"
+            position={'fixed'}
+            width={'100%'}
+          >
             <ChatHeader title={room.title} />
           </Box>
-          <Box height={'calc(100vh - 130px)'}>
+          <Box
+            height={'calc(100vh - 70px)'}
+            ref={chatBodyRef}
+            overflow={'auto'}
+            paddingTop={'70px'}
+          >
             <ChatBody data={chats} />
           </Box>
           <Box>

@@ -17,8 +17,6 @@ export default function ChatFooter({
     fileRef.current.click()
   }
 
-  console.log('attachment clicked', attachments)
-
   return (
     <Box position={'fixed'} bottom={0} left={0} width="100%">
       <Flex display={'flex'}>
@@ -28,6 +26,7 @@ export default function ChatFooter({
             placeholder="Type message here..."
             size={'lg'}
             name="text"
+            background={'white'}
             onChange={({ target }) =>
               handleChange({ [target.name]: target.value })
             }
