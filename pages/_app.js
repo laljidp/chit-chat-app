@@ -7,6 +7,7 @@ import '../styles/globals.css'
 import { extendTheme } from '@chakra-ui/react'
 import { useState } from 'react'
 import PageLoader from '../components/PageLoader'
+import UserContext from '../context/userContext'
 
 // 2. Extend the theme to include custom colors, fonts, etc
 const colors = {
@@ -33,7 +34,9 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <ChakraProvider theme={theme}>
-      {pageLoading ? <PageLoader /> : <Component {...pageProps} />}
+      <UserContext>
+        {pageLoading ? <PageLoader /> : <Component {...pageProps} />}
+      </UserContext>
     </ChakraProvider>
   )
 }

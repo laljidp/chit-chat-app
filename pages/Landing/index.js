@@ -1,12 +1,15 @@
 import { Container, Flex, Input, Button, Grid } from '@chakra-ui/react'
 import { ArrowForwardIcon } from '@chakra-ui/icons'
 import AnimLogo from '../../components/AnimLogo'
-import { createGroup } from '../../api/group.fb'
-import { useState } from 'react'
+import { createRoom } from '../../api/rooms.fb'
+import { useContext, useState } from 'react'
 import { useRouter } from 'next/router'
+import { UContext } from '../../context/userContext'
 
 export default function Home() {
   const [isSubmitting, setSubmitting] = useState(false)
+
+  const { setUserInfo } = useContext(UContext)
 
   const router = useRouter()
 
@@ -16,7 +19,7 @@ export default function Home() {
     const title = formData.get('title')
     const userName = formData.get('name')
     setSubmitting(true)
-    const response = await createGroup({
+    const response = await createRoom({
       title,
       userName,
       participants: [],
@@ -25,6 +28,12 @@ export default function Home() {
     })
     if (response.success) {
       console.log('Document created successfully!')
+      setUserInfo({
+        userName,
+        title,
+        isAdmin: true,
+        roomID: response.documentID,
+      })
       router.push(`/chat-room/${response.documentID}`)
     }
     setSubmitting(false)

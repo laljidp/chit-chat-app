@@ -1,4 +1,4 @@
-import { Container, Spinner } from '@chakra-ui/react'
+import { Box, Container, Spinner, Text } from '@chakra-ui/react'
 
 export default function PageLoader({ className = '' }) {
   return (
@@ -10,13 +10,16 @@ export default function PageLoader({ className = '' }) {
       height="85vh"
       className={className}
     >
-      <Spinner
-        thickness="4px"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="blue.500"
-        size="xl"
-      />
+      <Box display={'grid'} lineHeight={2}>
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="blue.500"
+          size="xl"
+        />
+        <Text marginTop={2}>Loading...</Text>
+      </Box>
     </Container>
   )
 }

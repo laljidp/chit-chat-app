@@ -1,3 +1,4 @@
+import { messageConverter } from './converters/message.converter'
 import { db } from './firebase'
 import {
   collection,
@@ -7,6 +8,7 @@ import {
   limit,
   orderBy,
   addDoc,
+  updateDoc,
 } from 'firebase/firestore'
 
 export const MESSAGES = 'messages'
@@ -15,6 +17,7 @@ export const saveMessage = async (payload) => {
   try {
     const chatsRef = await addDoc(collection(db, MESSAGES), payload)
     if (chatsRef.id) {
+      await updateDoc(chatsRef, { id: chatsRef.id })
       return { success: true, documentID: chatsRef.id }
     } else {
       return {
@@ -24,6 +27,7 @@ export const saveMessage = async (payload) => {
       }
     }
   } catch (error) {
+    console.log('error', error)
     return {
       success: false,
       message: error.message,
@@ -31,14 +35,9 @@ export const saveMessage = async (payload) => {
   }
 }
 
-export const getChatsByGroup = async (roomID) => {
+export const getChatsByRoom = async (roomID) => {
   try {
-    const q = query(
-      collection(db, MESSAGES),
-      where('roomID', '==', roomID),
-      limit(50),
-      orderBy('created_at', 'desc')
-    )
+    const q = getChatsByGroupQuery(roomID)
     const querySnapshot = await getDocs(q)
     let data = []
     querySnapshot.forEach((doc) => {
@@ -50,3 +49,11 @@ export const getChatsByGroup = async (roomID) => {
     return { success: false, error: error.message }
   }
 }
+
+export const getChatsByGroupQuery = (roomID) =>
+  query(
+    collection(db, MESSAGES).withConverter(messageConverter),
+    where('roomID', '==', roomID),
+    orderBy('createdAt', 'desc'),
+    limit(50)
+  )

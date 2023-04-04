@@ -1,4 +1,4 @@
-class Group {
+class Room {
   constructor(payload) {
     this.userName = payload.userName
     this.title = payload.title
@@ -27,10 +27,11 @@ export const groupConverter = {
       id: group.id,
       createdAt: group.createdAt,
       participants: group.participants || [],
+      joined: group.joined || [],
     }
   },
   fromFirestore: (snapshot, options) => {
     const data = snapshot.data(options)
-    return new Group(data).getFormattedData()
+    return new Room(data).getFormattedData()
   },
 }
