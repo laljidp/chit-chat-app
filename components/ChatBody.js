@@ -1,10 +1,11 @@
+import React from 'react'
 import { Box, Container, Text } from '@chakra-ui/react'
 import { useContext } from 'react'
 import { UContext } from '../context/userContext'
 import styled from '@emotion/styled'
 import moment from 'moment/moment'
 
-export default function ChatBody({ data: messages }) {
+function ChatBody({ data: messages }) {
   const {
     user: { userName = '' },
   } = useContext(UContext)
@@ -56,3 +57,7 @@ const Message = styled(Box)(
   (props) =>
     props.me ? { borderRadius: '25px 10px' } : { borderRadius: '10px 25px' }
 )
+
+const MemoizedChatBody = React.memo(ChatBody)
+
+export default MemoizedChatBody
