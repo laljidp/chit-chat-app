@@ -1,6 +1,14 @@
-import { groupConverter } from './converters/room.converter'
+import { generateUID } from '../utils'
+import { roomConverter } from './converters/room.converter'
 import { db } from './firebase'
-import { addDoc, collection, updateDoc, doc, getDoc } from 'firebase/firestore'
+import {
+  addDoc,
+  collection,
+  updateDoc,
+  doc,
+  getDoc,
+  arrayUnion,
+} from 'firebase/firestore'
 
 export const ROOMS = 'rooms'
 
@@ -8,8 +16,18 @@ export const createRoom = async (payload) => {
   try {
     const roomRef = (
       await addDoc(collection(db, ROOMS), payload)
-    ).withConverter(groupConverter)
-    await updateDoc(roomRef, { id: roomRef.id })
+    ).withConverter(roomConverter)
+    await updateDoc(roomRef, {
+      id: roomRef.id,
+      joined: [
+        {
+          id: generateUID(),
+          userName: payload.userName,
+          isAdmin: true,
+          ua: navigator.userAgent || 'N/A',
+        },
+      ],
+    })
     console.log('Document added with ID:', roomRef.id)
     return { success: true, documentID: roomRef.id }
   } catch (error) {
@@ -20,8 +38,7 @@ export const createRoom = async (payload) => {
 
 export const getRoomInfo = async (groupID) => {
   try {
-    console.log('Getting room info', groupID)
-    const roomRef = doc(db, ROOMS, groupID).withConverter(groupConverter)
+    const roomRef = doc(db, ROOMS, groupID).withConverter(roomConverter)
     const roomSnap = await getDoc(roomRef)
     if (roomSnap && roomSnap.exists()) {
       return { data: roomSnap.data(), success: true }
@@ -31,5 +48,23 @@ export const getRoomInfo = async (groupID) => {
   } catch (error) {
     console.log('🚀 ~ file: rooms.fb.js:26 ~ getGroupInfo ~ ̥:', error.message)
     return { success: false, message: 'Something went wrong!' }
+  }
+}
+
+// it will update the joined array of room document
+export const addUserToRoom = async (roomID, payload) => {
+  try {
+    const roomRef = doc(db, ROOMS, roomID).withConverter(roomConverter)
+    await updateDoc(
+      roomRef,
+      {
+        joined: arrayUnion(payload),
+      },
+      { merge: false }
+    )
+    return { success: true, message: 'User joined the Room' }
+  } catch (error) {
+    console.log('error: ', error)
+    return { success: false, message: error.message }
   }
 }

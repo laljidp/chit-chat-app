@@ -16,7 +16,7 @@ export async function getServerSideProps(context) {
   console.log('Group Info ===>>', roomID)
   return {
     props: {
-      group: response?.data || {},
+      room: response?.data || {},
       roomID: roomID,
     },
   }
@@ -24,10 +24,9 @@ export async function getServerSideProps(context) {
 
 let unsubscribe
 
-export default function ChatRoom({ group, roomID }) {
+export default function ChatRoom({ room, roomID }) {
   const isLoading = useLoading()
   const { user } = useContext(UContext)
-  console.log('user:', user)
   const toast = useToast()
   const [chats, setChats] = useState([])
   const [message, setMessage] = useState({
@@ -49,7 +48,7 @@ export default function ChatRoom({ group, roomID }) {
       })
       return
     }
-
+    // call Firebase API to save the message
     const payload = {
       ...message,
       sender: user?.userName,
@@ -59,9 +58,11 @@ export default function ChatRoom({ group, roomID }) {
     }
     console.log('Payload', payload)
     const result = await saveMessage(payload)
-    console.log('result', result)
     if (result.success) {
-      console.log('Message saved...')
+      setMessage({
+        text: '',
+        attachments: [],
+      })
     } else {
       toast({
         title: 'Message failed to send!',
@@ -69,13 +70,10 @@ export default function ChatRoom({ group, roomID }) {
         status: 'error',
       })
     }
-    // call Firebase API to save the message
   }
 
   const fetchChatsByRoom = async () => {
-    console.log('Hello==>', roomID)
     const response = await getChatsByRoom(roomID)
-    console.log('Group Info ===>>', response)
     if (response.success) {
       setChats(response.data)
     }
@@ -85,11 +83,9 @@ export default function ChatRoom({ group, roomID }) {
     fetchChatsByRoom()
   }, [])
 
-  if (!user?.userName && !isLoading) {
+  if (!room?.id && user?.userName) {
     return <InvalidRequest />
   }
-
-  console.log('chats', chats)
 
   return (
     <Box>
@@ -98,7 +94,7 @@ export default function ChatRoom({ group, roomID }) {
       {!isLoading && (
         <Box>
           <Box padding={4} bgGradient="linear(to-r, green.100, pink.300)">
-            <ChatHeader title={group.title} />
+            <ChatHeader title={room.title} />
           </Box>
           <Box height={'calc(100vh - 130px)'}>
             <ChatBody data={chats} />

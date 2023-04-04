@@ -4,7 +4,8 @@ class Room {
     this.title = payload.title
     this.id = payload.id
     this.createdAt = payload.createdAt
-    this.participants = payload.participants
+    this.participants = payload.participants || []
+    this.joined = payload.joined || []
   }
 
   getFormattedData() {
@@ -19,7 +20,7 @@ class Room {
   }
 }
 
-export const groupConverter = {
+export const roomConverter = {
   toFirestore: (group) => {
     return {
       userName: group.userName,
