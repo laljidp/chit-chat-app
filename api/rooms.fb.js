@@ -36,11 +36,13 @@ export const createRoom = async (payload) => {
   }
 }
 
-export const getRoomInfo = async (groupID) => {
+export const getRoomRef = (roomID) =>
+  doc(db, ROOMS, roomID).withConverter(roomConverter)
+
+export const getRoomInfo = async (roomID) => {
   try {
-    const roomRef = doc(db, ROOMS, groupID).withConverter(roomConverter)
-    const roomSnap = await getDoc(roomRef)
-    if (roomSnap && roomSnap.exists()) {
+    const roomSnap = await getDoc(getRoomRef(roomID))
+    if (roomSnap && !roomSnap.data().isDeleted) {
       return { data: roomSnap.data(), success: true }
     } else {
       return { success: false, message: 'Room not found' }
@@ -66,5 +68,32 @@ export const addUserToRoom = async (roomID, payload) => {
   } catch (error) {
     console.log('error: ', error)
     return { success: false, message: error.message }
+  }
+}
+
+export const deleteRoom = async (roomID) => {
+  try {
+    const roomRef = doc(db, ROOMS, roomID)
+    await updateDoc(roomRef, {
+      isDeleted: true,
+    })
+    return { success: true, message: 'Room deleted' }
+  } catch (error) {
+    console.log('error: ', error)
+    return {
+      success: false,
+      message: 'Error deleting room',
+    }
+  }
+}
+
+export const updateInvittes = async (roomID, payload) => {
+  try {
+    const roomRef = doc(db, ROOMS, roomID).withConverter(roomConverter)
+    await updateDoc(roomRef, { invitee: arrayUnion(payload) })
+    return { success: true, message: 'Invitee updated!' }
+  } catch (err) {
+    console.log('error updating room invittes', err)
+    return { success: false, message: err.message }
   }
 }

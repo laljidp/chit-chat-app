@@ -24,6 +24,15 @@ export default function UserContext({ children }) {
     setUser(userInfo)
   }
 
+  const logoutRoom = (redirect = () => {}) => {
+    localStorage.removeItem(USER_STORAGE_KEY)
+    setUser({
+      isAdmin: false,
+      userName: '',
+    })
+    redirect()
+  }
+
   useEffect(() => {
     const token = localStorage.getItem(USER_STORAGE_KEY)
     if (token) {
@@ -37,7 +46,7 @@ export default function UserContext({ children }) {
   }, [])
 
   return (
-    <UContext.Provider value={{ user, setUserInfo }}>
+    <UContext.Provider value={{ user, setUserInfo, logoutRoom }}>
       {children}
     </UContext.Provider>
   )

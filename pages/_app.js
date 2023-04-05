@@ -1,5 +1,5 @@
 // pages/_app.js
-import { ChakraProvider, Container, Flex, Spinner } from '@chakra-ui/react'
+import { ChakraProvider } from '@chakra-ui/react'
 import Router from 'next/router'
 import '../styles/globals.css'
 
@@ -8,6 +8,7 @@ import { extendTheme } from '@chakra-ui/react'
 import { useState } from 'react'
 import PageLoader from '../components/PageLoader'
 import UserContext from '../context/userContext'
+import RoomContextProvider from '../context/roomContext'
 
 // 2. Extend the theme to include custom colors, fonts, etc
 const colors = {
@@ -35,7 +36,9 @@ function MyApp({ Component, pageProps }) {
   return (
     <ChakraProvider theme={theme}>
       <UserContext>
-        {pageLoading ? <PageLoader /> : <Component {...pageProps} />}
+        <RoomContextProvider>
+          {pageLoading ? <PageLoader /> : <Component {...pageProps} />}
+        </RoomContextProvider>
       </UserContext>
     </ChakraProvider>
   )

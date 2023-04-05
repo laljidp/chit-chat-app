@@ -4,8 +4,9 @@ class Room {
     this.title = payload.title
     this.id = payload.id
     this.createdAt = payload.createdAt
-    this.participants = payload.participants || []
+    this.invitee = payload.invitee || []
     this.joined = payload.joined || []
+    this.isDeleted = payload.isDeleted || false
   }
 
   getFormattedData() {
@@ -14,8 +15,13 @@ class Room {
       title: this.title,
       id: this.id,
       createdAt: this.createdAt.toDate().toString(),
-      participants: this.participants || [],
+      invitee:
+        this.invitee.map((i) => ({
+          ...i,
+          createdAt: i.createdAt.toDate().toString(),
+        })) || [],
       joined: this.joined || [],
+      isDeleted: this.isDeleted || false,
     }
   }
 }
@@ -27,7 +33,7 @@ export const roomConverter = {
       title: group.title,
       id: group.id,
       createdAt: group.createdAt,
-      participants: group.participants || [],
+      invitee: group.invitee || [],
       joined: group.joined || [],
     }
   },

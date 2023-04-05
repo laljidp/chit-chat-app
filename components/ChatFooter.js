@@ -14,7 +14,7 @@ export default function ChatFooter({
   const fileRef = useRef(null)
 
   const handleAttachmentClick = () => {
-    fileRef.current.click()
+    fileRef.current?.click()
   }
 
   console.log('attachments', attachments)

@@ -5,31 +5,29 @@ import ChatHeader from '../../components/ChatHeader'
 import ChatFooter from '../../components/ChatFooter'
 import ChatBody from '../../components/ChatBody'
 import InvalidRequest from '../../components/InvalidRequest'
-import { getRoomInfo } from '../../api/rooms.fb'
-import { Box, useToast } from '@chakra-ui/react'
+import { getRoomInfo, getRoomRef } from '../../api/rooms.fb'
+import { Box, useDisclosure, useToast } from '@chakra-ui/react'
 import { UContext } from '../../context/userContext'
-import {
-  getChatsByGroupQuery,
-  getChatsByRoom,
-  saveMessage,
-} from '../../api/message.db'
+import { getChatsByGroupQuery, saveMessage } from '../../api/message.db'
 import { onSnapshot } from 'firebase/firestore'
+import DeleteRoomModal from '../../components/DeleteRoomModal'
+import InviteUserModal from '../../components/InviteUserModal'
 
 export async function getServerSideProps(context) {
   const roomID = context.params.roomId
   const response = await getRoomInfo(roomID)
-  console.log('Group Info ===>>', roomID)
+  console.log('Group Info ===>>', response)
   return {
     props: {
-      room: response?.data || {},
-      roomID: roomID,
+      roomInfo: response?.data || {},
     },
   }
 }
 
-export default function ChatRoom({ room, roomID }) {
+export default function ChatRoom({ roomInfo }) {
   const isLoading = useLoading()
   const { user } = useContext(UContext)
+  const [room, setRoom] = useState(roomInfo)
   const toast = useToast()
   const [chats, setChats] = useState([])
   const [message, setMessage] = useState({
@@ -37,6 +35,13 @@ export default function ChatRoom({ room, roomID }) {
     attachments: [],
   })
   const chatBodyRef = useRef(null)
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isInviteModalOpen,
+    onOpen: onInviteModalOpen,
+    onClose: onInviteModalClose,
+  } = useDisclosure()
 
   const handleChange = (data) => {
     setMessage({ ...message, ...data })
@@ -56,7 +61,7 @@ export default function ChatRoom({ room, roomID }) {
     const payload = {
       ...message,
       sender: user?.userName,
-      roomID: roomID,
+      roomID: room.id,
       createdAt: new Date(),
       status: '',
     }
@@ -77,7 +82,7 @@ export default function ChatRoom({ room, roomID }) {
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
-      getChatsByGroupQuery(roomID),
+      getChatsByGroupQuery(room?.id),
       (querySnapshot) => {
         const data = []
         querySnapshot.forEach((doc) => {
@@ -85,21 +90,26 @@ export default function ChatRoom({ room, roomID }) {
         })
         setChats(data)
         setTimeout(() => {
-          chatBodyRef.current.scrollTo({
+          chatBodyRef?.current?.scrollTo({
             top: chatBodyRef.current.scrollHeight,
             behavior: 'smooth',
           })
-        }, 500)
+        }, 300)
       }
     )
 
+    const unsubscribeRoomInfo = onSnapshot(getRoomRef(room?.id), (roomSnap) => {
+      setRoom(roomSnap.data())
+    })
+
     return () => {
       unsubscribe && unsubscribe()
+      unsubscribeRoomInfo && unsubscribeRoomInfo()
     }
   }, [])
 
-  if (!room?.id && user?.userName) {
-    return <InvalidRequest />
+  if (!room?.id) {
+    return <InvalidRequest errorText="Room does not exists!" />
   }
 
   return (
@@ -114,7 +124,11 @@ export default function ChatRoom({ room, roomID }) {
             position={'fixed'}
             width={'100%'}
           >
-            <ChatHeader title={room.title} />
+            <ChatHeader
+              title={room.title}
+              onDelete={onOpen}
+              onInviteClick={onInviteModalOpen}
+            />
           </Box>
           <Box
             height={'calc(100vh - 70px)'}
@@ -134,6 +148,17 @@ export default function ChatRoom({ room, roomID }) {
           </Box>
         </Box>
       )}
+      <DeleteRoomModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onDelete={() => {}}
+        roomTitle={room?.title}
+      />
+      <InviteUserModal
+        isOpen={isInviteModalOpen}
+        onClose={onInviteModalClose}
+        invitee={room.invitee}
+      />
     </Box>
   )
 }

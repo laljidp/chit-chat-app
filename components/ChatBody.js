@@ -10,13 +10,15 @@ function ChatBody({ data: messages }) {
     user: { userName = '' },
   } = useContext(UContext)
 
+  console.log('messages', messages)
+
   return (
     <Container maxW={'container.lg'} padding={'10px 5px'}>
       {messages.map((message) => (
         <BoxAlign key={message.id} me={userName === message.sender}>
           <Message bgColor={'teal.500'} me={userName === message.sender}>
-            <Text as="h1" color="white" fontWeight={600}>
-              {message.sender}{' '}
+            <Text as="h5" color="white" fontWeight={500}>
+              {userName === message.sender ? 'You' : message.sender}{' '}
               <small>({moment(message.createdAt).fromNow()})</small>
             </Text>
             <hr />

@@ -9,3 +9,8 @@ export const toBase64 = (file) =>
   })
 
 export const generateUID = () => uuid4()
+
+export const isValidPhoneNumber = (number) => {
+  const regex = /^\d{10}$/
+  return regex.test(number)
+}
