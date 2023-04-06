@@ -1,7 +1,9 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
   Box,
   Button,
-  Flex,
   Input,
   InputGroup,
   InputLeftAddon,
@@ -29,12 +31,15 @@ import { updateInvittes } from '../api/rooms.fb'
 import { isValidPhoneNumber } from '../utils'
 import { getMessageString, sendSMS } from '../api/fastSMS'
 import moment from 'moment'
+import CopyLinkButton from './CopyLinkButton'
 
 export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
   const [isSubmitting, setSubmitting] = useState(false)
   const [phoneNumber, setPhoneNumber] = useState('')
   const { user } = useContext(UContext)
   const toast = useToast()
+
+  const roomURL = `${window.origin}/join-room/${user?.roomID}`
 
   console.log('invitee', invitee)
 
@@ -55,7 +60,6 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
       return
     }
 
-    const url = `${window.origin}/join-room/${user?.roomID}`
     const message = getMessageString(url, user?.title)
     const result = await sendSMS(phoneNumber, message)
     if (result.success) {
@@ -93,9 +97,18 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
         <ModalCloseButton />
         <ModalBody>
           {notAllowToSendSMS && (
-            <Text textAlign={'center'} color={'red.300'} fontWeight={500}>
-              You've exceeded your sms sending limit. !
-            </Text>
+            <>
+              <Alert status="warning">
+                <AlertIcon />
+                <AlertDescription fontWeight={500}>
+                  You've exceeded SMS sending limits for the room. You can send
+                  a link by copying it.
+                </AlertDescription>
+              </Alert>
+              <Box display={'flex'} justifyContent={'center'} marginTop={3}>
+                <CopyLinkButton link={roomURL} />
+              </Box>
+            </>
           )}
           {!notAllowToSendSMS && (
             <>
@@ -107,24 +120,26 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
                   onChange={({ target }) => setPhoneNumber(target.value)}
                 />
               </InputGroup>
-              <Button
-                rounded={'full'}
-                size="sm"
-                colorScheme="teal"
-                mr={3}
-                onClick={handleClose}
-              >
-                Cancel
-              </Button>
-              <Button
-                isLoading={isSubmitting}
-                rounded={'full'}
-                onClick={inviteUserRequest}
-                colorScheme="telegram"
-                size="sm"
-              >
-                Send Link
-              </Button>
+              <Box display={'flex'} justifyContent={'flex-end'} marginTop={5}>
+                <Button
+                  rounded={'full'}
+                  size="sm"
+                  colorScheme="teal"
+                  mr={3}
+                  onClick={handleClose}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  isLoading={isSubmitting}
+                  rounded={'full'}
+                  onClick={inviteUserRequest}
+                  colorScheme="telegram"
+                  size="sm"
+                >
+                  Send Link
+                </Button>
+              </Box>
             </>
           )}
         </ModalBody>

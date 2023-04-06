@@ -14,6 +14,19 @@ function ChatBody({ data: messages }) {
 
   return (
     <Container maxW={'container.lg'} padding={'10px 5px'}>
+      {messages.length === 0 ? (
+        <Text
+          textAlign={'center'}
+          bg={'facebook.300'}
+          padding={2}
+          color={'white'}
+          borderRadius={'2xl'}
+        >
+          No chit chat yet. you can start by sending a message.
+        </Text>
+      ) : (
+        ''
+      )}
       {messages.map((message) => (
         <BoxAlign key={message.id} me={userName === message.sender}>
           <Message bgColor={'teal.500'} me={userName === message.sender}>

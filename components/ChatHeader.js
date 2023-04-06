@@ -2,7 +2,6 @@ import React from 'react'
 import { Box, Button, Flex, Text } from '@chakra-ui/react'
 
 function ChatHeader({ title, onDelete, onInviteClick }) {
-  console.log('re-rendering ChatHeader.....')
   return (
     <Box className="container.sm">
       <Flex justifyContent={'space-between'} alignItems={'center'}>
@@ -13,14 +12,14 @@ function ChatHeader({ title, onDelete, onInviteClick }) {
           <Button
             onClick={onInviteClick}
             colorScheme="facebook"
-            size={'xs'}
+            size={'sm'}
             borderRadius={'3xl'}
           >
             + Invite
           </Button>
           <Button
             colorScheme="red"
-            size={'xs'}
+            size={'sm'}
             onClick={onDelete}
             borderRadius={'3xl'}
             marginLeft={2}
