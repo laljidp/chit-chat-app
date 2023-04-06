@@ -1,6 +1,6 @@
 import { Box, Image } from '@chakra-ui/react'
 
-export default function ImagesLoader({ files = [] }) {
+export default function ImagePlaceholder({ files = [] }) {
   if (files.length === 0) return null
 
   return (

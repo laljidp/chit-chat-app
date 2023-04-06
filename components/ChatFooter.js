@@ -5,7 +5,7 @@ import { TbSend } from 'react-icons/tb'
 import { uploadFileToStorage } from '../api/message.db'
 import { UContext } from '../context/userContext'
 import FileUploadProgress from './FileUploadProgress'
-import ImagesLoader from './ImagesLoader'
+import ImagePlaceholder from './ImagePlaceholder'
 
 export default function ChatFooter({
   onSaveMessage,
@@ -52,10 +52,10 @@ export default function ChatFooter({
       roomID,
       file,
       (progress) => {
-        setFileUpload({
-          ...fileUpload,
+        setFileUpload((prevState) => ({
+          ...prevState,
           progress: progress,
-        })
+        }))
       },
       (fileURL) => {
         handleChange({
@@ -70,7 +70,7 @@ export default function ChatFooter({
     )
   }
 
-  console.log('attachments', attachments)
+  console.log('fileUpload', fileUpload)
 
   return (
     <Box position={'fixed'} bottom={0} left={0} width="100%">
@@ -118,6 +118,8 @@ export default function ChatFooter({
               left={10}
               right={10}
               zIndex={2}
+              bg={'white'}
+              borderRadius={'2xl'}
             >
               <FileUploadProgress
                 progress={fileUpload.progress}
@@ -127,8 +129,8 @@ export default function ChatFooter({
           )}
         </Box>
         {attachments.length > 0 && (
-          <Box position={'absolute'} bottom={20}>
-            <ImagesLoader files={attachments} />
+          <Box position={'absolute'} bottom={20} padding="0 5px">
+            <ImagePlaceholder files={attachments} />
           </Box>
         )}
         <Box>

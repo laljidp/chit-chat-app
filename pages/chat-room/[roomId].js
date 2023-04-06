@@ -127,6 +127,7 @@ export default function ChatRoom({ roomInfo }) {
             bgGradient="linear(to-r, green.100, pink.300)"
             position={'fixed'}
             width={'100%'}
+            zIndex={2}
           >
             <ChatHeader
               title={room.title}
