@@ -10,6 +10,12 @@ import {
   addDoc,
   updateDoc,
 } from 'firebase/firestore'
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from 'firebase/storage'
 
 export const MESSAGES = 'messages'
 
@@ -57,3 +63,48 @@ export const getChatsByGroupQuery = (roomID) =>
     orderBy('createdAt'),
     limit(50)
   )
+
+export const uploadFileToStorage = (
+  roomID,
+  file,
+  onProgress,
+  onUploadCompleted
+) => {
+  try {
+    const storage = getStorage()
+    const timestamp = new Date().getTime()
+    const storageRef = ref(
+      storage,
+      `images/${roomID}_${timestamp}_${file.name}`
+    )
+    const metadata = {
+      roomID,
+      name: file.name,
+      size: file.size,
+      type: file.type,
+    }
+
+    const uploadTask = uploadBytesResumable(storageRef, file, metadata)
+
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        console.log('Upload is' + progress + ' done')
+        onProgress(progress)
+      },
+      (error) => {
+        console.log('Eror while uploading file: ', error)
+      },
+      () => {
+        // Handle Successful uploads on complete
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          console.log('Files available at', downloadURL)
+          onUploadCompleted(downloadURL)
+        })
+      }
+    )
+  } catch (error) {
+    console.error('Error uploading file', error)
+  }
+}

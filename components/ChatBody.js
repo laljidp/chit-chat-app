@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Container, Text } from '@chakra-ui/react'
+import { Box, Container, Image, Text } from '@chakra-ui/react'
 import { useContext } from 'react'
 import { UContext } from '../context/userContext'
 import styled from '@emotion/styled'
@@ -35,6 +35,27 @@ function ChatBody({ data: messages }) {
               <small>({moment(message.createdAt).fromNow()})</small>
             </Text>
             <hr />
+            {message.attachments.length > 0 && (
+              <Box
+                position={'relative'}
+                height={75}
+                width={'100%'}
+                display={'flex'}
+                justifyContent={'center'}
+                marginTop={4}
+              >
+                {message.attachments.map((src, index) => (
+                  <Image
+                    height={75}
+                    width={75}
+                    src={src}
+                    opacity={0.8}
+                    position={'absolute'}
+                    left={index * 5}
+                  />
+                ))}
+              </Box>
+            )}
             <Text marginTop={3} fontWeight={500}>
               {message.text}
             </Text>
