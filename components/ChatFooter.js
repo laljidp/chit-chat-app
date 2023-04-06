@@ -1,4 +1,12 @@
-import { Box, Button, Input, Icon, Flex, useToast } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Input,
+  Icon,
+  Flex,
+  useToast,
+  SlideFade,
+} from '@chakra-ui/react'
 import { useContext, useRef, useState } from 'react'
 import { GrAttachment } from 'react-icons/gr'
 import { TbSend } from 'react-icons/tb'
@@ -70,8 +78,6 @@ export default function ChatFooter({
     )
   }
 
-  console.log('fileUpload', fileUpload)
-
   return (
     <Box position={'fixed'} bottom={0} left={0} width="100%">
       <Flex display={'flex'}>
@@ -110,7 +116,7 @@ export default function ChatFooter({
               />
             </Box>
           </Box>
-          {fileUpload.show && (
+          <SlideFade in={fileUpload.show} offsetY="20px">
             <Box
               position={'absolute'}
               bottom={20}
@@ -126,10 +132,10 @@ export default function ChatFooter({
                 fileName={fileUpload.name}
               />
             </Box>
-          )}
+          </SlideFade>
         </Box>
         {attachments.length > 0 && (
-          <Box position={'absolute'} bottom={20} padding="0 5px">
+          <Box position={'absolute'} bottom={16} padding="0 5px">
             <ImagePlaceholder files={attachments} />
           </Box>
         )}
