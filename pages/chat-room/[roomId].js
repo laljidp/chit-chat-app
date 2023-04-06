@@ -1,39 +1,47 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import PageLoader from '../../components/PageLoader'
 import useLoading from '../../hooks/useLoading'
 import ChatHeader from '../../components/ChatHeader'
 import ChatFooter from '../../components/ChatFooter'
 import ChatBody from '../../components/ChatBody'
 import InvalidRequest from '../../components/InvalidRequest'
-import { getRoomInfo } from '../../api/rooms.fb'
-import { Box, useToast } from '@chakra-ui/react'
+import { getRoomInfo, getRoomRef } from '../../api/rooms.fb'
+import { Box, useDisclosure, useToast } from '@chakra-ui/react'
 import { UContext } from '../../context/userContext'
-import { getChatsByRoom, saveMessage } from '../../api/message.db'
+import { getChatsByGroupQuery, saveMessage } from '../../api/message.db'
+import { onSnapshot } from 'firebase/firestore'
+import DeleteRoomModal from '../../components/DeleteRoomModal'
+import InviteUserModal from '../../components/InviteUserModal'
 
 export async function getServerSideProps(context) {
   const roomID = context.params.roomId
   const response = await getRoomInfo(roomID)
-  console.log('Group Info ===>>', roomID)
+  console.log('Group Info ===>>', response)
   return {
     props: {
-      group: response?.data || {},
-      roomID: roomID,
+      roomInfo: response?.data || {},
     },
   }
 }
 
-let unsubscribe
-
-export default function ChatRoom({ group, roomID }) {
+export default function ChatRoom({ roomInfo }) {
   const isLoading = useLoading()
   const { user } = useContext(UContext)
-  console.log('user:', user)
+  const [room, setRoom] = useState(roomInfo)
   const toast = useToast()
   const [chats, setChats] = useState([])
   const [message, setMessage] = useState({
     text: '',
     attachments: [],
   })
+  const chatBodyRef = useRef(null)
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isInviteModalOpen,
+    onOpen: onInviteModalOpen,
+    onClose: onInviteModalClose,
+  } = useDisclosure()
 
   const handleChange = (data) => {
     setMessage({ ...message, ...data })
@@ -49,19 +57,20 @@ export default function ChatRoom({ group, roomID }) {
       })
       return
     }
-
+    // call Firebase API to save the message
     const payload = {
       ...message,
       sender: user?.userName,
-      roomID: roomID,
+      roomID: room.id,
       createdAt: new Date(),
       status: '',
     }
-    console.log('Payload', payload)
     const result = await saveMessage(payload)
-    console.log('result', result)
     if (result.success) {
-      console.log('Message saved...')
+      setMessage({
+        text: '',
+        attachments: [],
+      })
     } else {
       toast({
         title: 'Message failed to send!',
@@ -69,27 +78,39 @@ export default function ChatRoom({ group, roomID }) {
         status: 'error',
       })
     }
-    // call Firebase API to save the message
-  }
-
-  const fetchChatsByRoom = async () => {
-    console.log('Hello==>', roomID)
-    const response = await getChatsByRoom(roomID)
-    console.log('Group Info ===>>', response)
-    if (response.success) {
-      setChats(response.data)
-    }
   }
 
   useEffect(() => {
-    fetchChatsByRoom()
+    const unsubscribe = onSnapshot(
+      getChatsByGroupQuery(room?.id),
+      (querySnapshot) => {
+        const data = []
+        querySnapshot.forEach((doc) => {
+          data.push(doc.data())
+        })
+        setChats(data)
+        setTimeout(() => {
+          chatBodyRef?.current?.scrollTo({
+            top: chatBodyRef.current.scrollHeight,
+            behavior: 'smooth',
+          })
+        }, 300)
+      }
+    )
+
+    const unsubscribeRoomInfo = onSnapshot(getRoomRef(room?.id), (roomSnap) => {
+      setRoom(roomSnap.data())
+    })
+
+    return () => {
+      unsubscribe && unsubscribe()
+      unsubscribeRoomInfo && unsubscribeRoomInfo()
+    }
   }, [])
 
-  if (!user?.userName && !isLoading) {
-    return <InvalidRequest />
+  if (!room?.id) {
+    return <InvalidRequest errorText="Room does not exists!" />
   }
-
-  console.log('chats', chats)
 
   return (
     <Box>
@@ -97,10 +118,24 @@ export default function ChatRoom({ group, roomID }) {
 
       {!isLoading && (
         <Box>
-          <Box padding={4} bgGradient="linear(to-r, green.100, pink.300)">
-            <ChatHeader title={group.title} />
+          <Box
+            padding={4}
+            bgGradient="linear(to-r, green.100, pink.300)"
+            position={'fixed'}
+            width={'100%'}
+          >
+            <ChatHeader
+              title={room.title}
+              onDelete={onOpen}
+              onInviteClick={onInviteModalOpen}
+            />
           </Box>
-          <Box height={'calc(100vh - 130px)'}>
+          <Box
+            height={'calc(100vh - 70px)'}
+            ref={chatBodyRef}
+            overflow={'auto'}
+            paddingTop={'70px'}
+          >
             <ChatBody data={chats} />
           </Box>
           <Box>
@@ -113,6 +148,17 @@ export default function ChatRoom({ group, roomID }) {
           </Box>
         </Box>
       )}
+      <DeleteRoomModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onDelete={() => {}}
+        roomTitle={room?.title}
+      />
+      <InviteUserModal
+        isOpen={isInviteModalOpen}
+        onClose={onInviteModalClose}
+        invitee={room.invitee}
+      />
     </Box>
   )
 }

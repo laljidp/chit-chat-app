@@ -14,10 +14,10 @@ export default function ChatFooter({
   const fileRef = useRef(null)
 
   const handleAttachmentClick = () => {
-    fileRef.current.click()
+    fileRef.current?.click()
   }
 
-  console.log('attachment clicked', attachments)
+  console.log('attachments', attachments)
 
   return (
     <Box position={'fixed'} bottom={0} left={0} width="100%">
@@ -28,20 +28,22 @@ export default function ChatFooter({
             placeholder="Type message here..."
             size={'lg'}
             name="text"
+            value={text}
+            background={'white'}
             onChange={({ target }) =>
               handleChange({ [target.name]: target.value })
             }
             paddingRight={10}
             borderRadius={'0 5px 0 5px'}
           />
-          <Box position={'absolute'} right={0} bottom={1}>
-            <Button
+          <Box position={'absolute'} right={4} bottom={2} zIndex={1}>
+            <Icon
               onClick={handleAttachmentClick}
-              borderRadius={'full'}
-              bg="white"
-            >
-              <Icon w={5} h={5} color="red.500" as={GrAttachment} />
-            </Button>
+              w={5}
+              h={5}
+              color="red.500"
+              as={GrAttachment}
+            />
             <Box visibility={'hidden'} position={'absolute'}>
               <input
                 ref={fileRef}
@@ -49,7 +51,7 @@ export default function ChatFooter({
                 name="attachment"
                 onChange={({ target }) => {
                   console.log('files ===>>', target.files)
-                  handleChange({ attachments: target?.files || [] })
+                  handleChange({ attachments: target?.files[0] || [] })
                 }}
               />
             </Box>

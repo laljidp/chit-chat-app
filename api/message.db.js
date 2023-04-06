@@ -54,6 +54,6 @@ export const getChatsByGroupQuery = (roomID) =>
   query(
     collection(db, MESSAGES).withConverter(messageConverter),
     where('roomID', '==', roomID),
-    orderBy('createdAt', 'desc'),
+    orderBy('createdAt'),
     limit(50)
   )

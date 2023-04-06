@@ -13,14 +13,15 @@
     "@emotion/styled": "^11.10.6",
     "cryptr": "^6.2.0",
     "eslint-config-prettier": "^8.7.0",
-    "fast-two-sms": "^3.0.0",
     "firebase": "^9.18.0",
     "framer-motion": "^10.5.0",
+    "moment": "^2.29.4",
     "next": "latest",
     "prettier": "^2.8.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-icons": "^4.8.0"
+    "react-icons": "^4.8.0",
+    "uuid4": "^2.0.3"
   },
   "devDependencies": {
     "eslint": "8.36.0",

@@ -6,10 +6,12 @@ class Message {
     this.roomID = message.roomID
     this.status = message.status
     this.createdAt = message.createdAt
+    this.id = message.id
   }
 
   format = () => {
     return {
+      id: this.id,
       text: this.text,
       sender: this.sender,
       attachments: this.attachments,

@@ -1,7 +1,11 @@
 import { Box, Button, Container } from '@chakra-ui/react'
 import Link from 'next/link'
+import AnimLogo from '../components/AnimLogo'
 
-export default function InvalidRequest() {
+export default function InvalidRequest({
+  errorText = 'Invalid Request',
+  errorCode = 404,
+}) {
   return (
     <Container
       height={'80vh'}
@@ -16,15 +20,18 @@ export default function InvalidRequest() {
         justifyContent={'center'}
         alignItems={'center'}
       >
+        <Box marginBottom={3}>
+          <AnimLogo />
+        </Box>
         <Box display={'inline-flex'}>
           <h3>
-            <b>500</b>
+            <b>{errorCode}</b>
           </h3>{' '}
-          &nbsp;&nbsp; | &nbsp;&nbsp;<span> Invalid Requests.</span>
+          &nbsp;&nbsp; | &nbsp;&nbsp;<span>{errorText}</span>
         </Box>
         <Box>
-          <Button marginTop={10}>
-            <Link href="/">Go to landing page</Link>
+          <Button colorScheme="linkedin" marginTop={10} borderRadius={'3xl'}>
+            <Link href="/">Create a new room</Link>
           </Button>
         </Box>
       </Box>
