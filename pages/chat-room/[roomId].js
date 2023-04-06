@@ -128,6 +128,7 @@ export default function ChatRoom({ roomInfo }) {
             position={'fixed'}
             width={'100%'}
             zIndex={2}
+            top={0}
           >
             <ChatHeader
               title={room.title}
@@ -136,10 +137,11 @@ export default function ChatRoom({ roomInfo }) {
             />
           </Box>
           <Box
-            height={'calc(100vh - 70px)'}
+            height={'calc(100vh - 135px)'}
             ref={chatBodyRef}
             overflow={'auto'}
-            paddingTop={'70px'}
+            margin={'70px 0'}
+            padding={'5px 0'}
           >
             <ChatBody data={chats} />
           </Box>
