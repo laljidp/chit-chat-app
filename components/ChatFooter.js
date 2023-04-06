@@ -152,7 +152,7 @@ export default function ChatFooter({
           </Button>
         </Box>
       </Flex>
-      <Box height={5} bg="green.100" />
+      <Box height={6} bg="green.100" />
     </Box>
   )
 }
