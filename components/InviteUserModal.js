@@ -1,7 +1,10 @@
+import React from 'react'
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
   Box,
   Button,
-  Flex,
   Input,
   InputGroup,
   InputLeftAddon,
@@ -29,6 +32,7 @@ import { updateInvittes } from '../api/rooms.fb'
 import { isValidPhoneNumber } from '../utils'
 import { getMessageString, sendSMS } from '../api/fastSMS'
 import moment from 'moment'
+import CopyLinkButton from './CopyLinkButton'
 
 export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
   const [isSubmitting, setSubmitting] = useState(false)
@@ -36,13 +40,13 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
   const { user } = useContext(UContext)
   const toast = useToast()
 
-  console.log('invitee', invitee)
+  const getJoiningLink = () => {
+    return `${window?.location?.origin}/join-room/${user?.roomID}`
+  }
 
   const inviteUserRequest = async () => {
-    /// Firebase function to delete the rooms and messages.
     setSubmitting(true)
 
-    //send sms request
     if (!isValidPhoneNumber(phoneNumber)) {
       toast({
         title: 'Invalid Phone Number',
@@ -54,8 +58,8 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
       setSubmitting(false)
       return
     }
-
-    const url = `${window.origin}/join-room/${user?.roomID}`
+    //send link via sms
+    const url = getJoiningLink()
     const message = getMessageString(url, user?.title)
     const result = await sendSMS(phoneNumber, message)
     if (result.success) {
@@ -71,7 +75,6 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
         number: phoneNumber,
         createdAt: new Date(),
       })
-      console.log('resullt', result)
       handleClose()
     }
     setSubmitting(false)
@@ -89,15 +92,20 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
     <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Invite Via Phone Number</ModalHeader>
+        <ModalHeader>Invite Via Phone Number </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {notAllowToSendSMS && (
-            <Text textAlign={'center'} color={'red.300'} fontWeight={500}>
-              You've exceeded your sms sending limit. !
-            </Text>
-          )}
-          {!notAllowToSendSMS && (
+          {notAllowToSendSMS ? (
+            <>
+              <Alert status="warning">
+                <AlertIcon />
+                <AlertDescription fontWeight={500}>
+                  You've exceeded SMS sending limits for the room. You can send
+                  a link by copying it.
+                </AlertDescription>
+              </Alert>
+            </>
+          ) : (
             <>
               <InputGroup>
                 <InputLeftAddon children="+91" />
@@ -107,24 +115,25 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
                   onChange={({ target }) => setPhoneNumber(target.value)}
                 />
               </InputGroup>
-              <Button
-                rounded={'full'}
-                size="sm"
-                colorScheme="teal"
-                mr={3}
-                onClick={handleClose}
+              <Box
+                display={'flex'}
+                justifyContent={'flex-end'}
+                alignItems={'center'}
+                marginTop={5}
               >
-                Cancel
-              </Button>
-              <Button
-                isLoading={isSubmitting}
-                rounded={'full'}
-                onClick={inviteUserRequest}
-                colorScheme="telegram"
-                size="sm"
-              >
-                Send Link
-              </Button>
+                <Box display={'flex'} justifyContent={'center'} marginRight={2}>
+                  <CopyLinkButton link={getJoiningLink()} />
+                </Box>
+                <Button
+                  isLoading={isSubmitting}
+                  rounded={'full'}
+                  onClick={inviteUserRequest}
+                  colorScheme="telegram"
+                  size="sm"
+                >
+                  Send Link
+                </Button>
+              </Box>
             </>
           )}
         </ModalBody>

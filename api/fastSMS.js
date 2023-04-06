@@ -13,7 +13,8 @@ export const sendSMS = async (numbers, message) => {
     const baseUrl = 'https://www.fast2sms.com/dev/bulkV2'
     const fullUrl = `${baseUrl}?${new URLSearchParams(params).toString()}`
     const response = await fetch(fullUrl)
-    console.log('sending sMS ==>>', response)
+    const data = await response.json()
+    console.log(`sms sent to ==>> ${numbers}`, data.request_id)
     return { success: true, requestID: 'sms' }
   } catch (err) {
     console.log(`Error sending SMS to ${numbers || 'NO_NUMBER'}`, err)
