@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   Alert,
   AlertDescription,
@@ -39,15 +40,13 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
   const { user } = useContext(UContext)
   const toast = useToast()
 
-  const roomURL = `${window.origin}/join-room/${user?.roomID}`
-
-  console.log('invitee', invitee)
+  const getJoiningLink = () => {
+    return `${window?.location?.origin}/join-room/${user?.roomID}`
+  }
 
   const inviteUserRequest = async () => {
-    /// Firebase function to delete the rooms and messages.
     setSubmitting(true)
 
-    //send sms request
     if (!isValidPhoneNumber(phoneNumber)) {
       toast({
         title: 'Invalid Phone Number',
@@ -59,7 +58,8 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
       setSubmitting(false)
       return
     }
-
+    //send link via sms
+    const url = getJoiningLink()
     const message = getMessageString(url, user?.title)
     const result = await sendSMS(phoneNumber, message)
     if (result.success) {
@@ -75,7 +75,6 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
         number: phoneNumber,
         createdAt: new Date(),
       })
-      console.log('resullt', result)
       handleClose()
     }
     setSubmitting(false)
@@ -93,10 +92,10 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
     <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Invite Via Phone Number</ModalHeader>
+        <ModalHeader>Invite Via Phone Number </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {notAllowToSendSMS && (
+          {notAllowToSendSMS ? (
             <>
               <Alert status="warning">
                 <AlertIcon />
@@ -105,12 +104,8 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
                   a link by copying it.
                 </AlertDescription>
               </Alert>
-              <Box display={'flex'} justifyContent={'center'} marginTop={3}>
-                <CopyLinkButton link={roomURL} />
-              </Box>
             </>
-          )}
-          {!notAllowToSendSMS && (
+          ) : (
             <>
               <InputGroup>
                 <InputLeftAddon children="+91" />
@@ -120,16 +115,15 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
                   onChange={({ target }) => setPhoneNumber(target.value)}
                 />
               </InputGroup>
-              <Box display={'flex'} justifyContent={'flex-end'} marginTop={5}>
-                <Button
-                  rounded={'full'}
-                  size="sm"
-                  colorScheme="teal"
-                  mr={3}
-                  onClick={handleClose}
-                >
-                  Cancel
-                </Button>
+              <Box
+                display={'flex'}
+                justifyContent={'flex-end'}
+                alignItems={'center'}
+                marginTop={5}
+              >
+                <Box display={'flex'} justifyContent={'center'} marginRight={2}>
+                  <CopyLinkButton link={getJoiningLink()} />
+                </Box>
                 <Button
                   isLoading={isSubmitting}
                   rounded={'full'}

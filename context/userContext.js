@@ -17,6 +17,7 @@ export default function UserContext({ children }) {
     isAdmin: false,
     userName: '',
   })
+  const [userLoading, setUserLoading] = useState(true)
 
   const setUserInfo = (userInfo) => {
     const token = cryptr.encrypt(JSON.stringify(userInfo))
@@ -34,6 +35,7 @@ export default function UserContext({ children }) {
   }
 
   useEffect(() => {
+    setUserLoading(true)
     const token = localStorage.getItem(USER_STORAGE_KEY)
     if (token) {
       const decryptStr = cryptr.decrypt(token)
@@ -43,10 +45,11 @@ export default function UserContext({ children }) {
         setUser(userInfo)
       }
     }
+    setUserLoading(false)
   }, [])
 
   return (
-    <UContext.Provider value={{ user, setUserInfo, logoutRoom }}>
+    <UContext.Provider value={{ user, setUserInfo, logoutRoom, userLoading }}>
       {children}
     </UContext.Provider>
   )

@@ -1,7 +1,7 @@
 import { CopyIcon } from '@chakra-ui/icons'
 import { Box, Button, Text, useToast } from '@chakra-ui/react'
 
-export default function CopyLinkButton({ link }) {
+export default function CopyLinkButton({ link, ...restProps }) {
   const toast = useToast()
 
   const onCopy = () => {
@@ -16,10 +16,15 @@ export default function CopyLinkButton({ link }) {
   }
 
   return (
-    <Box display={'inline-flex'} alignItems={'center'}>
-      <Button variant={'solid'} color={'AppWorkspace'} colorScheme="facebook">
-        <CopyIcon onClick={onCopy} />
-      </Button>{' '}
-    </Box>
+    <Button
+      rounded={'full'}
+      variant={'solid'}
+      size="sm"
+      color={'AppWorkspace'}
+      colorScheme="facebook"
+      {...restProps}
+    >
+      <CopyIcon onClick={onCopy} />
+    </Button>
   )
 }

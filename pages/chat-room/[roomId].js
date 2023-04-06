@@ -1,4 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react'
+import dynamic from 'next/dynamic'
 import PageLoader from '../../components/PageLoader'
 import useLoading from '../../hooks/useLoading'
 import ChatHeader from '../../components/ChatHeader'
@@ -11,12 +12,15 @@ import { UContext } from '../../context/userContext'
 import { getChatsByGroupQuery, saveMessage } from '../../api/message.db'
 import { onSnapshot } from 'firebase/firestore'
 import DeleteRoomModal from '../../components/DeleteRoomModal'
-import InviteUserModal from '../../components/InviteUserModal'
+
+const InviteUserModal = dynamic(
+  () => import('../../components/InviteUserModal'),
+  { ssr: false }
+)
 
 export async function getServerSideProps(context) {
   const roomID = context.params.roomId
   const response = await getRoomInfo(roomID)
-  console.log('Group Info ===>>', response)
   return {
     props: {
       roomInfo: response?.data || {},
@@ -26,7 +30,7 @@ export async function getServerSideProps(context) {
 
 export default function ChatRoom({ roomInfo }) {
   const isLoading = useLoading()
-  const { user } = useContext(UContext)
+  const { user, userLoading } = useContext(UContext)
   const [room, setRoom] = useState(roomInfo)
   const toast = useToast()
   const [chats, setChats] = useState([])
@@ -108,7 +112,7 @@ export default function ChatRoom({ roomInfo }) {
     }
   }, [])
 
-  if (!room?.id) {
+  if ((!room?.id || !user?.userName) && !userLoading) {
     return <InvalidRequest errorText="Room does not exists!" />
   }
 
