@@ -35,7 +35,23 @@ export default function UserContext({ children }) {
     redirect()
   }
 
-  const addRoom = () => {}
+  const addRoom = (roomInfo) => {
+    const existingRooms = JSON.parse(
+      localStorage.getItem(ROOMS_STORAGE_KEY) || '[]'
+    )
+    if (Array.isArray(existingRooms)) {
+      const rooms = [...existingRooms, roomInfo]
+      localStorage.setItem(ROOMS_STORAGE_KEY, JSON.stringify(rooms))
+      return
+    } else {
+      console.log('Error storing rooms to: ' + existingRooms)
+    }
+  }
+
+  const getLocalRooms = () => {
+    const rooms = JSON.parse(localStorage.getItem(ROOMS_STORAGE_KEY) || '[]')
+    return rooms
+  }
 
   useEffect(() => {
     setUserLoading(true)
@@ -52,7 +68,16 @@ export default function UserContext({ children }) {
   }, [])
 
   return (
-    <UContext.Provider value={{ user, setUserInfo, logoutRoom, userLoading }}>
+    <UContext.Provider
+      value={{
+        user,
+        setUserInfo,
+        logoutRoom,
+        userLoading,
+        addRoom,
+        getLocalRooms,
+      }}
+    >
       {children}
     </UContext.Provider>
   )

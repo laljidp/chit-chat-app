@@ -28,7 +28,7 @@ export async function getServerSideProps(context) {
 export default function JoinRoom({ room }) {
   const [isSubmitting, setSubmitting] = useState(false)
   const [name, setName] = useState('')
-  const { setUserInfo } = useContext(UContext)
+  const { setUserInfo, addRoom } = useContext(UContext)
   const router = useRouter()
   const toast = useToast()
 
@@ -55,12 +55,14 @@ export default function JoinRoom({ room }) {
     })
     if (result.success) {
       // Create token for the user
-      setUserInfo({
+      const roomInfo = {
         userName: name,
         title: room?.title,
         isAdmin: false,
         roomID: room?.id,
-      })
+      }
+      setUserInfo(roomInfo)
+      addRoom(roomInfo)
       router.push(`/chat-room/${room.id}`)
     } else {
       setSubmitting(false)

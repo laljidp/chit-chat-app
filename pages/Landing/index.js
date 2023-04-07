@@ -1,15 +1,24 @@
-import { Container, Flex, Input, Button, Grid } from '@chakra-ui/react'
+import {
+  Container,
+  Flex,
+  Input,
+  Button,
+  Grid,
+  Box,
+  Text,
+} from '@chakra-ui/react'
 import { ArrowForwardIcon } from '@chakra-ui/icons'
 import AnimLogo from '../../components/AnimLogo'
 import { createRoom } from '../../api/rooms.fb'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { UContext } from '../../context/userContext'
+import RoomLists from '../../components/RoomList'
 
 export default function Home() {
   const [isSubmitting, setSubmitting] = useState(false)
-
-  const { setUserInfo } = useContext(UContext)
+  const [existingRooms, setExistingRooms] = useState([])
+  const { setUserInfo, addRoom, getLocalRooms } = useContext(UContext)
 
   const router = useRouter()
 
@@ -26,22 +35,36 @@ export default function Home() {
       joined: [],
       createdAt: new Date(),
     })
+    const payload = {
+      userName,
+      title,
+      isAdmin: true,
+      roomID: response.documentID,
+    }
     if (response.success) {
       console.log('Document created successfully!')
-      setUserInfo({
-        userName,
-        title,
-        isAdmin: true,
-        roomID: response.documentID,
-      })
+      setUserInfo(payload)
+      addRoom(payload)
       router.push(`/chat-room/${response.documentID}`)
     }
     setSubmitting(false)
   }
 
+  const handleRoomJoin = (room) => {
+    setUserInfo(room)
+    router.push(`/chat-room/${room.roomID}`)
+  }
+
+  useEffect(() => {
+    const rooms = getLocalRooms()
+    setExistingRooms(rooms)
+  }, [])
+
+  console.log('Existing rooms', existingRooms)
+
   return (
     <Container maxW="container.sm">
-      <Flex justifyContent={'center'} alignItems="center" height={'75vh'}>
+      <Flex justifyContent={'center'} alignItems="center" height={'40vh'}>
         <Grid justifyContent={'center'} alignItems="normal">
           <Flex alignItems="center" justifyContent="center" borderRadius="10">
             <AnimLogo />
@@ -75,11 +98,17 @@ export default function Home() {
               type="submit"
               isLoading={isSubmitting}
             >
-              START
+              START A ROOM
             </Button>
           </form>
         </Grid>
       </Flex>
+      <Box>
+        <Text marginBottom={2} as={'h2'} fontWeight={500}>
+          Recently Joined rooms
+        </Text>
+        <RoomLists rooms={existingRooms} onRoomClick={handleRoomJoin} />
+      </Box>
     </Container>
   )
 }
