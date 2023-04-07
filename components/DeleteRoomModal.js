@@ -31,6 +31,10 @@ export default function ({ isOpen, onClose }) {
     setSubmitting(false)
   }
 
+  const handleExitRoom = () => {
+    router.push('/')
+  }
+
   const handleClose = () => {
     setSubmitting(false)
     onClose()
@@ -40,13 +44,12 @@ export default function ({ isOpen, onClose }) {
     <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Delete Room</ModalHeader>
+        <ModalHeader>Exit Room</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Text fontWeight="600" mb="1rem">
-            You are about to delete this room{' '}
-            <Text color={'red.400'}>"{user?.title}"</Text> & associated
-            messages/media! Are you sure?
+            You are about to exit this room{' '}
+            <Text color={'red.400'}>"{user?.title}"</Text> & Are you sure?
           </Text>
         </ModalBody>
         <ModalFooter>
@@ -62,11 +65,11 @@ export default function ({ isOpen, onClose }) {
           <Button
             isLoading={isSubmitting}
             rounded={'full'}
-            onClick={handleDeleteRoom}
+            onClick={handleExitRoom}
             colorScheme="red"
             size="sm"
           >
-            Yes, delete
+            Yes, exit
           </Button>
         </ModalFooter>
       </ModalContent>

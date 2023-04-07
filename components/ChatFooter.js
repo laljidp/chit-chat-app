@@ -84,7 +84,6 @@ export default function ChatFooter({
   const onEmojiClick = (emoji) => {
     const cursor = inputRef.current.selectionStart
     const msg = text.slice(0, cursor) + emoji + text.slice(cursor)
-    //    setMessageForm(text)//
     handleChange({
       text: msg,
     })

@@ -1,6 +1,8 @@
 import React from 'react'
-import { Box, Button, Flex, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Icon, Text } from '@chakra-ui/react'
 import CopyLinkButton from './CopyLinkButton'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
+import { TbLogout } from 'react-icons/tb'
 
 function ChatHeader({ title, onDelete, joiningLink }) {
   return (
@@ -18,7 +20,8 @@ function ChatHeader({ title, onDelete, joiningLink }) {
             borderRadius={'3xl'}
             marginLeft={2}
           >
-            Destroy
+            Exit &nbsp;
+            <Icon as={TbLogout} height={4} width={4} />
           </Button>
         </Box>
       </Flex>
