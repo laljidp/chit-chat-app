@@ -15,7 +15,7 @@ function ChatBody({ data: messages }) {
 
   return (
     <Container maxW={'container.lg'} padding={'10px 5px'}>
-      {messages.length === 0 ? (
+      {messages.length === 0 && (
         <Text
           textAlign={'center'}
           bg={'facebook.300'}
@@ -25,24 +25,25 @@ function ChatBody({ data: messages }) {
         >
           No chit chat yet. you can start by sending a message.
         </Text>
-      ) : (
-        ''
       )}
-      {messages.map((message) => (
-        <BoxAlign key={message.id} me={userName === message.sender}>
-          <Message bgColor={'teal.500'} me={userName === message.sender}>
-            <Text as="h5" color="white" fontWeight={500}>
-              {userName === message.sender ? 'You' : message.sender}&nbsp;
-              <small>( {moment(message.createdAt).fromNow()} )</small>
-            </Text>
-            <hr />
-            <ImagesPreview images={message.attachments || []} />
-            <Text marginTop={3} fontWeight={500}>
-              {message.text}
-            </Text>
-          </Message>
-        </BoxAlign>
-      ))}
+      {messages.map((message) => {
+        const isMe = userName === message.sender
+        return (
+          <BoxAlign key={message.id} me={isMe}>
+            <Message bgColor={isMe ? 'facebook.500' : 'telegram.500'} me={isMe}>
+              <Text as="h5" color="white" fontWeight={500}>
+                {isMe ? 'You' : message.sender}&nbsp;
+                <small>( {moment(message.createdAt).fromNow()} )</small>
+              </Text>
+              <hr />
+              <ImagesPreview images={message.attachments || []} />
+              <Text marginTop={3} fontWeight={500}>
+                {message.text}
+              </Text>
+            </Message>
+          </BoxAlign>
+        )
+      })}
     </Container>
   )
 }
