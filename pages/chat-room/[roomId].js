@@ -69,13 +69,12 @@ export default function ChatRoom({ roomInfo }) {
       createdAt: new Date(),
       status: '',
     }
+    setMessage({
+      text: '',
+      attachments: [],
+    })
     const result = await saveMessage(payload)
-    if (result.success) {
-      setMessage({
-        text: '',
-        attachments: [],
-      })
-    } else {
+    if (!result.success) {
       toast({
         title: 'Message failed to send!',
         position: 'top',
@@ -137,7 +136,7 @@ export default function ChatRoom({ roomInfo }) {
             />
           </Box>
           <Box
-            height={'calc(100vh - 135px)'}
+            height={'calc(100vh - 140px)'}
             ref={chatBodyRef}
             overflow={'auto'}
             margin={'70px 0'}

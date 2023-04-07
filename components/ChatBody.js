@@ -4,6 +4,7 @@ import { useContext } from 'react'
 import { UContext } from '../context/userContext'
 import styled from '@emotion/styled'
 import moment from 'moment/moment'
+import ImagesPreview from './ImagesPreview'
 
 function ChatBody({ data: messages }) {
   const {
@@ -31,31 +32,11 @@ function ChatBody({ data: messages }) {
         <BoxAlign key={message.id} me={userName === message.sender}>
           <Message bgColor={'teal.500'} me={userName === message.sender}>
             <Text as="h5" color="white" fontWeight={500}>
-              {userName === message.sender ? 'You' : message.sender}{' '}
-              <small>({moment(message.createdAt).fromNow()})</small>
+              {userName === message.sender ? 'You' : message.sender}&nbsp;
+              <small>( {moment(message.createdAt).fromNow()} )</small>
             </Text>
             <hr />
-            {message.attachments.length > 0 && (
-              <Box
-                position={'relative'}
-                height={75}
-                width={'100%'}
-                display={'flex'}
-                justifyContent={'center'}
-                marginTop={4}
-              >
-                {message.attachments.map((src, index) => (
-                  <Image
-                    height={75}
-                    width={75}
-                    src={src}
-                    opacity={0.8}
-                    position={'absolute'}
-                    left={index * 5}
-                  />
-                ))}
-              </Box>
-            )}
+            <ImagesPreview images={message.attachments || []} />
             <Text marginTop={3} fontWeight={500}>
               {message.text}
             </Text>

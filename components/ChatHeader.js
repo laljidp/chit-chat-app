@@ -1,7 +1,8 @@
 import React from 'react'
 import { Box, Button, Flex, Text } from '@chakra-ui/react'
+import CopyLinkButton from './CopyLinkButton'
 
-function ChatHeader({ title, onDelete, onInviteClick }) {
+function ChatHeader({ title, onDelete, joiningLink }) {
   return (
     <Box className="container.sm">
       <Flex justifyContent={'space-between'} alignItems={'center'}>
@@ -9,14 +10,7 @@ function ChatHeader({ title, onDelete, onInviteClick }) {
           {title}
         </Text>
         <Box display={'flex'} alignItems={'center'}>
-          <Button
-            onClick={onInviteClick}
-            colorScheme="facebook"
-            size={'sm'}
-            borderRadius={'3xl'}
-          >
-            + Invite
-          </Button>
+          <CopyLinkButton link={joiningLink} />
           <Button
             colorScheme="red"
             size={'sm'}

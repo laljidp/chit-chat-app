@@ -22,9 +22,11 @@ export default function CopyLinkButton({ link, ...restProps }) {
       size="sm"
       color={'AppWorkspace'}
       colorScheme="facebook"
+      onClick={onCopy}
       {...restProps}
     >
-      <CopyIcon onClick={onCopy} />
+      <Text marginRight={1}>Room link</Text>
+      <CopyIcon />
     </Button>
   )
 }
