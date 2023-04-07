@@ -133,6 +133,7 @@ export default function ChatRoom({ roomInfo }) {
               title={room.title}
               onDelete={onOpen}
               onInviteClick={onInviteModalOpen}
+              joiningLink={`${location.origin}/join-room${room.id}`}
             />
           </Box>
           <Box
