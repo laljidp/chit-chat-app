@@ -14,14 +14,17 @@ import { uploadFileToStorage } from '../api/message.db'
 import { UContext } from '../context/userContext'
 import FileUploadProgress from './FileUploadProgress'
 import ImagePlaceholder from './ImagePlaceholder'
+import Emojis from './Emojis'
 
 export default function ChatFooter({
   onSaveMessage,
   handleChange,
+  handleRemoveImage,
   text,
   attachments,
 }) {
   const fileRef = useRef(null)
+  const inputRef = useRef(null)
   const toast = useToast()
   const {
     user: { roomID },
@@ -78,6 +81,15 @@ export default function ChatFooter({
     )
   }
 
+  const onEmojiClick = (emoji) => {
+    const cursor = inputRef.current.selectionStart
+    const msg = text.slice(0, cursor) + emoji + text.slice(cursor)
+    //    setMessageForm(text)//
+    handleChange({
+      text: msg,
+    })
+  }
+
   return (
     <Box position={'fixed'} bottom={0} left={0} width="100%">
       <Flex display={'flex'}>
@@ -88,6 +100,7 @@ export default function ChatFooter({
             size={'lg'}
             name="text"
             value={text}
+            ref={inputRef}
             background={'white'}
             onChange={({ target }) =>
               handleChange({ [target.name]: target.value })
@@ -135,8 +148,11 @@ export default function ChatFooter({
           </SlideFade>
         </Box>
         {attachments.length > 0 && (
-          <Box position={'absolute'} bottom={16} padding="0 5px">
-            <ImagePlaceholder files={attachments} />
+          <Box position={'absolute'} bottom={20} padding="0 5px">
+            <ImagePlaceholder
+              files={attachments}
+              onRemoveImage={handleRemoveImage}
+            />
           </Box>
         )}
         <Box>
@@ -152,7 +168,9 @@ export default function ChatFooter({
           </Button>
         </Box>
       </Flex>
-      <Box height={6} bg="green.100" />
+      <Box height={10} bg="green.100">
+        <Emojis onEmojiClick={onEmojiClick} />
+      </Box>
     </Box>
   )
 }
