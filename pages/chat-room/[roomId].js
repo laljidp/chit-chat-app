@@ -84,29 +84,33 @@ export default function ChatRoom({ roomInfo }) {
   }
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      getChatsByGroupQuery(room?.id),
-      (querySnapshot) => {
-        const data = []
-        querySnapshot.forEach((doc) => {
-          data.push(doc.data())
-        })
-        setChats(data)
-        setTimeout(() => {
-          chatBodyRef?.current?.scrollTo({
-            top: chatBodyRef.current.scrollHeight,
-            behavior: 'smooth',
-          })
-        }, 300)
-      }
-    )
+    let unsubscribeChats
+    let unsubscribeRoomInfo
 
-    const unsubscribeRoomInfo = onSnapshot(getRoomRef(room?.id), (roomSnap) => {
-      setRoom(roomSnap.data())
-    })
+    if (room?.id) {
+      unsubscribeChats = onSnapshot(
+        getChatsByGroupQuery(room?.id),
+        (querySnapshot) => {
+          const data = []
+          querySnapshot.forEach((doc) => {
+            data.push(doc.data())
+          })
+          setChats(data)
+          setTimeout(() => {
+            chatBodyRef?.current?.scrollTo({
+              top: chatBodyRef.current.scrollHeight,
+              behavior: 'smooth',
+            })
+          }, 300)
+        }
+      )
+      unsubscribeRoomInfo = onSnapshot(getRoomRef(room?.id), (roomSnap) => {
+        setRoom(roomSnap.data())
+      })
+    }
 
     return () => {
-      unsubscribe && unsubscribe()
+      unsubscribeChats && unsubscribeChats()
       unsubscribeRoomInfo && unsubscribeRoomInfo()
     }
   }, [])
