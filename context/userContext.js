@@ -11,6 +11,7 @@ const cryptr = new Cryptr(secretKey, {
 export const UContext = createContext(null)
 
 const USER_STORAGE_KEY = 'userToken'
+const ROOMS_STORAGE_KEY = 'rooms'
 
 export default function UserContext({ children }) {
   const [user, setUser] = useState({
@@ -34,13 +35,15 @@ export default function UserContext({ children }) {
     redirect()
   }
 
+  const addRoom = () => {}
+
   useEffect(() => {
     setUserLoading(true)
     const token = localStorage.getItem(USER_STORAGE_KEY)
     if (token) {
       const decryptStr = cryptr.decrypt(token)
       const userInfo = JSON.parse(decryptStr)
-      console.log('userInfo', userInfo)
+      console.log('userInfo ====>>>', userInfo)
       if (userInfo) {
         setUser(userInfo)
       }

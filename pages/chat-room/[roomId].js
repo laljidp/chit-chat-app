@@ -51,6 +51,12 @@ export default function ChatRoom({ roomInfo }) {
     setMessage({ ...message, ...data })
   }
 
+  const handleRemoveImage = (src) => {
+    const newAttachmentArr = message.attachments.slice()
+    newAttachmentArr.splice(newAttachmentArr.indexOf(src), 1)
+    setMessage({ ...message, attachments: newAttachmentArr })
+  }
+
   const handleSaveMessage = async () => {
     if (!message?.text?.trim() && message.attachments.length === 0) {
       toast({
@@ -141,7 +147,7 @@ export default function ChatRoom({ roomInfo }) {
             />
           </Box>
           <Box
-            height={'calc(100vh - 140px)'}
+            height={'calc(100vh - 155px)'}
             ref={chatBodyRef}
             overflow={'auto'}
             margin={'70px 0'}
@@ -155,6 +161,7 @@ export default function ChatRoom({ roomInfo }) {
               attachments={message.attachments}
               onSaveMessage={handleSaveMessage}
               handleChange={handleChange}
+              handleRemoveImage={handleRemoveImage}
             />
           </Box>
         </Box>

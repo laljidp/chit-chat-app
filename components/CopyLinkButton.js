@@ -9,7 +9,7 @@ export default function CopyLinkButton({ link, ...restProps }) {
     toast({
       status: 'info',
       duration: 2500,
-      title: 'Link Copied to clipboard',
+      description: 'Link Copied to clipboard',
       position: 'top',
       isClosable: true,
     })
