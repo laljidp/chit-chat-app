@@ -29,19 +29,24 @@ function ChatBody({ data: messages }) {
       {messages.map((message) => {
         const isMe = userName === message.sender
         return (
-          <BoxAlign key={message.id} me={isMe}>
-            <Message bgColor={isMe ? 'facebook.500' : 'telegram.500'} me={isMe}>
-              <Text as="h5" color="white" fontWeight={500}>
-                {isMe ? 'You' : message.sender}&nbsp;
-                <small>( {moment(message.createdAt).fromNow()} )</small>
-              </Text>
-              <hr />
-              <ImagesPreview images={message.attachments || []} />
-              <Text marginTop={3} fontWeight={500}>
-                {message.text}
-              </Text>
-            </Message>
-          </BoxAlign>
+          <React.Fragment key={message.id}>
+            <BoxAlign me={isMe}>
+              <Message
+                bgColor={isMe ? 'facebook.500' : 'telegram.500'}
+                me={isMe}
+              >
+                <Text as="h5" color="white" fontWeight={500}>
+                  {isMe ? 'You' : message.sender}&nbsp;
+                  <small>( {moment(message.createdAt).fromNow()} )</small>
+                </Text>
+                <hr />
+                <ImagesPreview images={message.attachments || []} />
+                <Text marginTop={3} fontWeight={500}>
+                  {message.text}
+                </Text>
+              </Message>
+            </BoxAlign>
+          </React.Fragment>
         )
       })}
     </Container>

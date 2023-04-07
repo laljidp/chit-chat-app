@@ -11,6 +11,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
+import React from 'react'
 
 export default function ImagesPreview({ images = [] }) {
   const { isOpen, onClose, onOpen } = useDisclosure()
@@ -29,17 +30,17 @@ export default function ImagesPreview({ images = [] }) {
         onClick={onOpen}
       >
         {images.map((src, index) => (
-          <>
+          <React.Fragment key={src}>
             <Image
               height={75}
               width={75}
-              key={index}
+              key={src}
               src={src}
               opacity={0.8}
               position={'absolute'}
               left={index * 5}
             />
-          </>
+          </React.Fragment>
         ))}
       </Box>
       <Modal onClose={onClose} size={'full'} isOpen={isOpen}>
@@ -50,12 +51,12 @@ export default function ImagesPreview({ images = [] }) {
           <ModalBody>
             {isOpen &&
               images.map((src, index) => (
-                <>
+                <React.Fragment key={src}>
                   <Text margin={'1rem 0'} textAlign={'center'}>
                     ( {index + 1} )
                   </Text>
                   <Image key={index} src={src} left={index * 5} />
-                </>
+                </React.Fragment>
               ))}
           </ModalBody>
         </ModalContent>
