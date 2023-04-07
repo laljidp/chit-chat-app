@@ -92,7 +92,7 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
     <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Invite Via Phone Number </ModalHeader>
+        <ModalHeader>Invite via Link</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {notAllowToSendSMS ? (
@@ -107,7 +107,7 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
             </>
           ) : (
             <>
-              <InputGroup>
+              <InputGroup visibility={'hidden'}>
                 <InputLeftAddon children="+91" />
                 <Input
                   type="tel"
@@ -125,6 +125,7 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
                   <CopyLinkButton link={getJoiningLink()} />
                 </Box>
                 <Button
+                  visibility={'hidden'}
                   isLoading={isSubmitting}
                   rounded={'full'}
                   onClick={inviteUserRequest}
@@ -137,37 +138,6 @@ export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
             </>
           )}
         </ModalBody>
-        <ModalFooter></ModalFooter>
-        <Box>
-          <Text as="h1" fontSize={22} textAlign={'center'} marginBottom={5}>
-            Invited numbers logs
-          </Text>
-          <TableContainer>
-            <Table variant="simple">
-              <TableCaption>
-                <Text fontSize={15}>
-                  You can send link upto 10 times for the room.
-                </Text>
-              </TableCaption>
-              <Thead>
-                <Tr>
-                  <Th>#</Th>
-                  <Th>Phone number</Th>
-                  <Th>Sent</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {invitee.map((user, index) => (
-                  <Tr key={index}>
-                    <Td isNumeric>{index + 1}</Td>
-                    <Td>{user?.number}</Td>
-                    <Td>{moment(user.createdAt).fromNow()}</Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
-        </Box>
       </ModalContent>
     </Modal>
   )
