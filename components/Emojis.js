@@ -8,8 +8,9 @@ export default function Emojis({ onEmojiClick, emojiSize = '24px' }) {
       overflowX={'auto'}
       fontSize={emojiSize}
     >
-      {EMOJIS.map((emoji) => (
+      {EMOJIS.map((emoji, index) => (
         <Text
+          key={index}
           marginRight={3}
           cursor={'pointer'}
           fontSize={'24px'}

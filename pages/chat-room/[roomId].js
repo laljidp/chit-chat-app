@@ -147,23 +147,21 @@ export default function ChatRoom({ roomInfo }) {
             />
           </Box>
           <Box
-            height={'calc(100vh - 155px)'}
+            height={'calc(100vh - 160px)'}
             ref={chatBodyRef}
             overflow={'auto'}
-            margin={'70px 0'}
+            margin={'64px 0 90px 0'}
             padding={'5px 0'}
           >
             <ChatBody data={chats} />
           </Box>
-          <Box>
-            <ChatFooter
-              text={message.text}
-              attachments={message.attachments}
-              onSaveMessage={handleSaveMessage}
-              handleChange={handleChange}
-              handleRemoveImage={handleRemoveImage}
-            />
-          </Box>
+          <ChatFooter
+            text={message.text}
+            attachments={message.attachments}
+            onSaveMessage={handleSaveMessage}
+            handleChange={handleChange}
+            handleRemoveImage={handleRemoveImage}
+          />
         </Box>
       )}
       <DeleteRoomModal

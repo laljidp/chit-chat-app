@@ -14,7 +14,7 @@ function ChatBody({ data: messages }) {
   console.log('messages', messages)
 
   return (
-    <Container maxW={'container.lg'} padding={'10px 5px'}>
+    <Container maxW={'container'} padding={'10px 5px'}>
       {messages.length === 0 && (
         <Text
           textAlign={'center'}
