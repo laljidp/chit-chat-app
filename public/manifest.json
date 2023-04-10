@@ -1,4 +1,5 @@
 {
+  "id": "/",
   "theme_color": "#805AD5",
   "background_color": "#00B5D8",
   "display": "fullscreen",
@@ -6,7 +7,7 @@
   "start_url": "/",
   "name": "ChitChat",
   "orientation": "portrait",
-  "short_name": "CC",  
+  "short_name": "ChitChat",  
   "description": "Chitchat app for chating with friends privately.",
   "icons": [
       {
@@ -30,8 +31,8 @@
           "type": "image/png"
       },
       {
-        "src": "icons/maskable.png",
-        "sizes": "48x48",      
+        "src": "icons/maskable_icon.png",
+        "sizes": "200x200",      
         "type": "image/x-icon",
         "purpose": "maskable"
       }

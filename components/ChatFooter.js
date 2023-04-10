@@ -81,6 +81,12 @@ export default function ChatFooter({
     )
   }
 
+  const handlePressEnter = (event) => {
+    if (event.key === 'Enter') {
+      onSaveMessage()
+    }
+  }
+
   const onEmojiClick = (emoji) => {
     const cursor = inputRef.current.selectionStart
     const msg = text.slice(0, cursor) + emoji + text.slice(cursor)
@@ -100,6 +106,7 @@ export default function ChatFooter({
             name="text"
             value={text}
             ref={inputRef}
+            onKeyDown={handlePressEnter}
             background={'white'}
             onChange={({ target }) =>
               handleChange({ [target.name]: target.value })
@@ -122,8 +129,8 @@ export default function ChatFooter({
                 accept="image/jpeg, image/png"
                 name="attachment"
                 onChange={({ target }) => {
-                  console.log('files ===>>', target.files)
                   handleUploadFile(target?.files || [])
+                  fileRef.current.files = []
                 }}
               />
             </Box>

@@ -105,7 +105,7 @@ export default function Home() {
       </Flex>
       <Box>
         <Text marginBottom={2} as={'h2'} fontWeight={500}>
-          Recently Joined rooms
+          Recently Joined rooms :
         </Text>
         <RoomLists rooms={existingRooms} onRoomClick={handleRoomJoin} />
       </Box>
