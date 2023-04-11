@@ -1,5 +1,5 @@
 import { CopyIcon } from '@chakra-ui/icons'
-import { Box, Button, Text, useToast } from '@chakra-ui/react'
+import { Button, Text, useToast } from '@chakra-ui/react'
 
 export default function CopyLinkButton({ link, ...restProps }) {
   const toast = useToast()

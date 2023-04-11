@@ -60,8 +60,6 @@ export default function Home() {
     setExistingRooms(rooms)
   }, [])
 
-  console.log('Existing rooms', existingRooms)
-
   return (
     <Container maxW="container.sm">
       <Flex justifyContent={'center'} alignItems="center" height={'40vh'}>

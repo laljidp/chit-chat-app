@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Grid, Text } from '@chakra-ui/react'
+import { Box, Button, Grid, Text } from '@chakra-ui/react'
 
 export default function RoomLists({ rooms = [], onRoomClick = () => {} }) {
   return (

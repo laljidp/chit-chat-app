@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Container, Image, Text } from '@chakra-ui/react'
+import { Box, Container, Text } from '@chakra-ui/react'
 import { useContext } from 'react'
 import { UContext } from '../context/userContext'
 import styled from '@emotion/styled'
@@ -10,8 +10,6 @@ function ChatBody({ data: messages }) {
   const {
     user: { userName = '' },
   } = useContext(UContext)
-
-  console.log('messages', messages)
 
   return (
     <Container maxW={'container'} padding={'10px 5px'}>
