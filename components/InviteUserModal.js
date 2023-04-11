@@ -12,18 +12,8 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Table,
-  TableCaption,
-  TableContainer,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
   useToast,
 } from '@chakra-ui/react'
 import { useContext, useState } from 'react'
@@ -31,7 +21,6 @@ import { UContext } from '../context/userContext'
 import { updateInvittes } from '../api/rooms.fb'
 import { isValidPhoneNumber } from '../utils'
 import { getMessageString, sendSMS } from '../api/fastSMS'
-import moment from 'moment'
 import CopyLinkButton from './CopyLinkButton'
 
 export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {

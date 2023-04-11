@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/react'
+import { Flex, Text } from '@chakra-ui/react'
 
 export default function Emojis({ onEmojiClick, emojiSize = '24px' }) {
   return (
