@@ -12,7 +12,7 @@ import {
 import { useContext, useState } from 'react'
 import { UContext } from '../context/userContext'
 import { useRouter } from 'next/router'
-import { deleteRoom } from '../api/rooms.fb'
+import { deleteRoom } from '../server/rooms.fb'
 
 export default function ({ isOpen, onClose }) {
   const [isSubmitting, setSubmitting] = useState(false)

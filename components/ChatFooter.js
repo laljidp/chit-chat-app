@@ -10,7 +10,7 @@ import {
 import { useContext, useRef, useState } from 'react'
 import { GrAttachment } from 'react-icons/gr'
 import { TbSend } from 'react-icons/tb'
-import { uploadFileToStorage } from '../api/message.db'
+import { uploadFileToStorage } from '../server/message.db'
 import { UContext } from '../context/userContext'
 import FileUploadProgress from './FileUploadProgress'
 import ImagePlaceholder from './ImagePlaceholder'

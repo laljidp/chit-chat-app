@@ -7,7 +7,7 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react'
-import { addUserToRoom, getRoomInfo } from '../../api/rooms.fb'
+import { addUserToRoom, getRoomInfo } from '../../server/rooms.fb'
 import AnimLogo from '../../components/AnimLogo'
 import InvalidRequest from '../../components/InvalidRequest'
 import { useContext, useState } from 'react'

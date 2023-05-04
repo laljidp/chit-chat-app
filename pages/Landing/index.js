@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react'
 import { ArrowForwardIcon } from '@chakra-ui/icons'
 import AnimLogo from '../../components/AnimLogo'
-import { createRoom } from '../../api/rooms.fb'
+import { createRoom } from '../../server/rooms.fb'
 import { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { UContext } from '../../context/userContext'
