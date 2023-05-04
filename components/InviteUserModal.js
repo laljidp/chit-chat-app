@@ -18,9 +18,9 @@ import {
 } from '@chakra-ui/react'
 import { useContext, useState } from 'react'
 import { UContext } from '../context/userContext'
-import { updateInvittes } from '../api/rooms.fb'
+import { updateInvittes } from '../server/rooms.fb'
 import { isValidPhoneNumber } from '../utils'
-import { getMessageString, sendSMS } from '../api/fastSMS'
+import { getMessageString, sendSMS } from '../server/fastSMS'
 import CopyLinkButton from './CopyLinkButton'
 
 export default function InviteUserModal({ isOpen, onClose, invitee = [] }) {
